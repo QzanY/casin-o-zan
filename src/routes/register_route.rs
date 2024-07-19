@@ -39,7 +39,7 @@ pub async fn create_user(state: State<Arc<AppState>>, Json(user): Json<UserReque
         user.name,
         format!("{:x}", hashed_password),
         100,
-        json!("")
+        json!([])
         
     ).fetch_one(&state.db).await;
 
