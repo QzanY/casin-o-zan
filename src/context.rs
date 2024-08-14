@@ -40,6 +40,11 @@ impl Context
         self.items.clone()
     }
 
+    pub fn set_balance(&mut self, balance: i32)
+    {
+        self.balance = balance;
+    }
+
     pub fn add_item(&mut self, item: Item, num: i32)
     {
         // Check if the item is already in the list if so increment the number else add it to the list

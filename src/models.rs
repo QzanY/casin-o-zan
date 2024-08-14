@@ -85,3 +85,11 @@ pub struct Token
     pub name: String,
     pub time: i64,
 }
+
+#[derive(Debug,Serialize,Deserialize)]
+pub struct DiceRequest
+{
+    pub number: u8,
+    pub guess: u16,
+    pub bet: u32,
+}

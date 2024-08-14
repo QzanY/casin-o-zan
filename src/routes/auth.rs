@@ -21,8 +21,10 @@ pub async fn context_resolver(
 ) -> Result<Response<Body>,ServerError>
 {
     println!(">>> RESOLVING CONTEXT\n");
-        let token = cookies.get(super::AUTH_TOKEN).ok_or(ServerError::NoCookie).unwrap()
-            .value().to_string();
+        let token = match cookies.get(super::AUTH_TOKEN) {
+            Some(cookie) => cookie.value().to_string(),
+            None => return Err(ServerError::NoCookie),
+        };
 
         let mut valid = Validation::default();
         valid.set_required_spec_claims(&[""]);

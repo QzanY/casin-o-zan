@@ -14,6 +14,7 @@ mod error;
 mod models;
 mod context;
 mod consts;
+mod games;
 use error::ServerError;
 use tower_cookies::CookieManagerLayer;
 
@@ -35,16 +36,16 @@ async fn main() -> Result<(), ServerError>
     };
     
     let auth_needed_routes =  Router::new()
-                                .route("/games",get(|| async {Html("<h1>Roll the dice!</h1>")}))
+                                .merge(games::game_routes(Arc::new(AppState { db: pool.clone() })))
                                 .route_layer(middleware::from_fn(routes::auth::check_auth));
 
     let main_routes = Router::new()
-        .route("/", get(|| async {Html("<h1>Hello, World!</h1>")}))
         .merge(store::store_routes(Arc::new(AppState { db: pool.clone() })))
         .merge(auth_needed_routes)
         .layer(middleware::from_fn_with_state(Arc::new(AppState { db: pool.clone() }), routes::auth::context_resolver))
         .merge(routes::user_routes(Arc::new(AppState { db: pool.clone() })))
-        .layer(CookieManagerLayer::new());
+        .layer(CookieManagerLayer::new())
+        .route("/", get(|| async {Html("<h1>Hello, World!</h1>")}));
     
 
     let addr = consts::SOCKET_ADDR;
